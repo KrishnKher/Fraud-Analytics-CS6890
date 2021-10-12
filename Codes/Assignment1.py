@@ -12,7 +12,8 @@ def probabilities(data):
     
     probs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     for number in data:
-        probs[(number%10)-1] += 1
+        first_digit = str(number)[0]
+        probs[int(first_digit)-1] += 1
     
     for index in range(len(probs)):
         probs[index] /= len(data)
@@ -36,7 +37,7 @@ def MAD(observed, expected):
         
 
 
-dataset = pandas.read_csv('uniform.csv')
+dataset = pandas.read_csv('normal.csv')
 dataset.data = dataset.data.astype('int64')
 dataset = list(dataset.data)
 
