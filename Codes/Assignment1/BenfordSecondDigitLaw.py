@@ -7,6 +7,7 @@ Authors: Bharat Chandra Mukkavalli (ES19BTECH11016), Krishn Vishwas Kher (ES19BT
 import pandas
 import numpy
 from scipy.stats import chisquare
+import matplotlib.pyplot as plt
 
 def probabilities(data):
     
@@ -39,9 +40,9 @@ def MAD(observed, expected):
         
 
 
-dataset = pandas.read_csv('uniform.csv')
-dataset.data = dataset.data.astype('int64')
-dataset = list(dataset.data)
+dataset = pandas.read_csv('data.csv',encoding='latin-1')
+dataset.Population = dataset.Population.astype('int64')
+dataset = list(dataset.Population)
 
 benford_probabilities = [numpy.log10(1.0 + 1.0/x) for x in range(10, 100)]
 #print(benford_probabilities)
@@ -51,3 +52,8 @@ print(benford_probabilities)
 kai2, p_val = chisquare(observed_probabilities, benford_probabilities)
 print("The MAD value between the expected and observed probabilites is:", MAD(observed_probabilities, benford_probabilities),"\b.")
 print("The p value upon running the χ2-square test is:", p_val,"\b.")
+
+plt.plot(observed_probabilities,label = 'Observed probabilities')
+plt.plot(benford_probabilities,label = 'Benford probabilities')
+plt.legend()
+plt.show()
