@@ -13,9 +13,9 @@ data['Pairs'] = data[['Vertex 1','Vertex 2']].apply(tuple,axis=1)
 phi = dict(zip(data['Pairs'],data['Amount']))
 
 
-k = 8
-m = 7120
-MAX_MNV = 200
+k = 10
+m = 7000
+MAX_MNV = 4
 NOP = 100
 Rank = {}
 
@@ -27,11 +27,10 @@ for v in data['Vertex 1']:
     G[v] = set(G[v])
 
 V = list(data['Vertex 1'])+list(data['Vertex 2'])
-V_s = [frozenset({e}) for e in V]
+V_s = [{e} for e in V]
 C = dict(zip(V,V_s))
-S = set(V_s)
+
 print('Intial Number of Clusters:',len(C))
-# print(S)
 
 def MNV(v1,v2):
     mnv = 0
@@ -45,11 +44,10 @@ def MNV(v1,v2):
                 mnv += Rank[v].get(u,NOP)
             else:
                 mnv += NOP
-    return mnv
-print(MNV(600,707))
-cnt = len(S)
-while len(S)>m:
-    #print(len(S))
+    return mnv/(len(C[v1])+len(C[v2]))
+
+cnt = len(C)
+while cnt>m:
     min_mnv = np.inf
     for u in V:
         for v in G.get(u,set()):
@@ -59,14 +57,14 @@ while len(S)>m:
                 min_mnv = cur_mnv
     if(min_mnv >= MAX_MNV):
         break
-    S.remove(C[C1])
-    S.remove(C[C2])
-    n_C = frozenset(set(C[C1])|set(C[C2]))
-    C[C1] = n_C
-    C[C2] = n_C
-    S.add(n_C)
+    cnt -= 1
+    n_C = C[C1]|C[C2]
+    for e in C[C1]:
+        C[e] = n_C
+    for e in C[C2]:
+        C[e] = n_C 
 
-#print(S)
-# cluster = set(frozenset(s) for s in C.values())
 
-# print('Final Number of Clusters:',len(cluster))
+cluster = set(frozenset(s) for s in C.values())
+
+print('Final Number of Clusters:',len(cluster))

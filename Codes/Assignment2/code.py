@@ -13,8 +13,8 @@ data['Pairs'] = data[['Vertex 1','Vertex 2']].apply(tuple,axis=1)
 phi = dict(zip(data['Pairs'],data['Amount']))
 
 
-k = 32
-kt = 2
+k = 10
+kt = 3
 
 for v in data['Vertex 1']:
     G[v].sort(key=lambda x: phi[(v,x)])
