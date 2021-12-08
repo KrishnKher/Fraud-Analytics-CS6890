@@ -3,7 +3,7 @@ import numpy as np
 
 data = pd.read_csv('cluster.csv')
 
-grouped  = data.groupby('Vertex 1')['Vertex 2'].apply(list)
+grouped  = data.groupby('Vertex 1')['Vertex 2'].apply(list) # Convert the data to a
 index = np.array(grouped.index)
 d = grouped.values
 
@@ -31,8 +31,14 @@ count = 0
 for u in V:
     for v in G.get(u,set()):
         if(v not in C[u] and len(G[u] & G.get(v,set()))>=kt and u in G.get(v,set())):
-            C[u] = C[u] | C.get(v,set())
-            C[v] = C[u]
+            n_C = C[u] | C.get(v,set())
+            for e in C[u]:
+                C[e] = n_C
+            for e in C.get(v,set()):
+                C[e] = n_C 
+# for e in C.values():
+#     if(len(e)>6):
+#         print(e)
 
 cluster = set(frozenset(s) for s in C.values())
 
