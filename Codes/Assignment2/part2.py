@@ -1,3 +1,5 @@
+from os import closerange
+from numpy.lib.index_tricks import c_
 import pandas as pd
 import numpy as np
 
@@ -15,12 +17,12 @@ phi = dict(zip(data['Pairs'],data['Amount']))
 
 k = 10
 m = 7000
-MAX_MNV = 4
-NOP = 100
+MAX_MNV = 2
+NOP = 1000
 Rank = {}
 
 for v in data['Vertex 1']:
-    G[v].sort(key=lambda x: phi[(v,x)])
+    G[v].sort(reverse = True,key=lambda x: phi[(v,x)])
     G[v] = G[v][:k]
 for v in data['Vertex 1']:
     Rank[v] = dict(zip(G[v],np.arange(1,len(G[v])))) 
@@ -44,18 +46,37 @@ def MNV(v1,v2):
                 mnv += Rank[v].get(u,NOP)
             else:
                 mnv += NOP
-    return mnv/(len(C[v1])+len(C[v2]))
+    return mnv/(len(C[v1])*len(C[v2]))
+
+def closeness(v1,v2):
+    c_val = 0
+    for u in C[v1]:
+        for v in C[v2]:
+            c_val += phi.get((u,v),0)
+            c_val += phi.get((v,u),0)
+    return c_val
 
 cnt = len(C)
 while cnt>m:
     min_mnv = np.inf
+    affinity = 0
     for u in V:
         for v in G.get(u,set()):
+            if(u in C[v]):
+                break
             cur_mnv = MNV(u,v)
             if cur_mnv< min_mnv:
                 C1,C2 = u,v
                 min_mnv = cur_mnv
-    if(min_mnv >= MAX_MNV):
+                affinity = closeness(u,v)
+            elif cur_mnv==min_mnv:
+                cur_aff = closeness(u,v)
+                if(affinity<cur_aff):
+                    C1,C2 = u,v
+                    min_mnv = cur_mnv
+                    affinity = closeness(u,v)
+
+    if(min_mnv > MAX_MNV):
         break
     cnt -= 1
     n_C = C[C1]|C[C2]
@@ -65,6 +86,9 @@ while cnt>m:
         C[e] = n_C 
 
 
-cluster = set(frozenset(s) for s in C.values())
+cluster = set(tuple(s) for s in C.values())
+for c in cluster:
+    if(len(c)>1):
+        print(c)
 
 print('Final Number of Clusters:',len(cluster))

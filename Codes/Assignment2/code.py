@@ -13,11 +13,11 @@ data['Pairs'] = data[['Vertex 1','Vertex 2']].apply(tuple,axis=1)
 phi = dict(zip(data['Pairs'],data['Amount']))
 
 
-k = 10
+k = 5
 kt = 3
 
 for v in data['Vertex 1']:
-    G[v].sort(key=lambda x: phi[(v,x)])
+    G[v].sort(reverse= True,key=lambda x: phi[(v,x)])
     G[v] = G[v][:k]
 for v in data['Vertex 1']:
     G[v] = set(G[v])
@@ -36,10 +36,11 @@ for u in V:
                 C[e] = n_C
             for e in C.get(v,set()):
                 C[e] = n_C 
-# for e in C.values():
-#     if(len(e)>6):
-#         print(e)
 
-cluster = set(frozenset(s) for s in C.values())
+
+cluster = set(tuple(s) for s in C.values())
+for e in cluster:
+    if(len(e)>1):
+        print(e)
 
 print('Final Number of Clusters:',len(cluster))
