@@ -13,9 +13,9 @@ data['Pairs'] = data[['Vertex 1','Vertex 2']].apply(tuple,axis=1)
 phi = dict(zip(data['Pairs'],data['Amount']))
 
 
-k = 25
-m = 5000
-MAX_MNV = 6
+k = 32
+m = 6000
+MAX_MNV = 8
 NOP = 1000
 Rank = {}
 
@@ -26,7 +26,7 @@ for v in set(data['Vertex 1']):
     Rank[v] = dict(zip(G[v],np.arange(1,len(G[v])+1))) 
 
 
-V = list(data['Vertex 1'])+list(data['Vertex 2'])
+V = list(set(list(data['Vertex 1'])+list(data['Vertex 2'])))
 V_s = [{e} for e in V]
 C = dict(zip(V,V_s))
 
@@ -89,8 +89,8 @@ while cnt>m:
 
 
 cluster = set(tuple(s) for s in C.values())
-for c in cluster:
-    if(len(c)>1):
-        print(c)
+# for c in cluster:
+#     if(len(c)>1):
+#         print(c)
 
 print('Final Number of Clusters:',len(cluster))

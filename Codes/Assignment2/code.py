@@ -23,7 +23,7 @@ for v in data['Vertex 1']:
     G[v] = set(G[v])
 
 
-V = list(data['Vertex 1'])+list(data['Vertex 2'])
+V = list(set(list(data['Vertex 1'])+list(data['Vertex 2'])))
 V_s = [{e} for e in V]
 C = dict(zip(V,V_s))
 print('Intial Number of Clusters:',len(C))
@@ -39,8 +39,8 @@ for u in V:
 
 
 cluster = set(tuple(s) for s in C.values())
-for e in cluster:
-    if(len(e)>1):
-        print(e)
+# for e in cluster:
+#     if(len(e)>1):
+#         print(e)
 
 print('Final Number of Clusters:',len(cluster))
