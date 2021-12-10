@@ -17,13 +17,11 @@ data = pd.read_csv("spectral.csv")
 
 N = len(data)
 col_header = data.columns
-Laplacian = []
-D = []
 
 # Initialising the matrix.
-for row_index in range(N):
-    Laplacian.append([0 for _ in range(N)])
-    D.append([0 for _ in range(N)])
+Laplacian = np.zeros((N, N))
+D = np.zeros((N, N))
+
 
 for row_index in range(N):
     diag_ele = 0
@@ -57,28 +55,23 @@ for vector in range(len(evecs)):
 
 evecvals = sorted(evecvals, key=lambda element: element[1])
 
-
 sorted_evals = evals
 sorted_evals.sort()
 
 
 plt.title("Sorted eigen values of the Laplacian.")
-plt.plot(range(len(sorted_evals)), sorted_evals)
+plt.plot(np.arange(len(sorted_evals)), sorted_evals)
 plt.show()
 
 principal_eigen_vectors = []
 
 for vec_index in range(2):
-   principal_eigen_vectors.append(principal_eigen_vectors[vec_index][0])
+   principal_eigen_vectors.append(evecvals[vec_index][0])
     
-principal_eigen_vectors = np.transpose(principal_eigen_vectors )
+principal_eigen_vectors = np.transpose(principal_eigen_vectors)
 data = np.array(data)
 
-print(principal_eigen_vectors.shape())
-transformed_data = data @ principal_eigen_vectors 
-
-kmeans_clusterer = KMeans(n_clusters = 2, random_state=16).fit_predict(transformed_data)
-sns.scatterplot(transformed_data[0], transformed_data[1], hue=kmeans_clusterer)
+kmeans_clusterer = KMeans(n_clusters = 4, random_state=16).fit_predict(principal_eigen_vectors)
+sns.scatterplot(principal_eigen_vectors[:,0], principal_eigen_vectors[:,1], hue=kmeans_clusterer)
 plt.title("Detecing outliers through clusters.")
 plt.show()
-
